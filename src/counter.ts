@@ -58,21 +58,37 @@ function getVisitorId(req: RequestLike): string {
     .substring(0, 32);
 }
 
-function getReferrerUrl(req: RequestLike): string | null {
+function getPageUrl(req: RequestLike): string | null {
+  // First try Referer header (most secure, can't be spoofed by end users)
   const referer =
     (req.headers?.["referer"] as string) ||
     (req.headers?.["referrer"] as string);
 
-  if (!referer) {
-    return null;
+  if (referer) {
+    try {
+      const url = new URL(referer);
+      return `${url.origin}${url.pathname}`;
+    } catch {
+      return referer;
+    }
   }
 
-  try {
-    const url = new URL(referer);
-    return `${url.origin}${url.pathname}`;
-  } catch {
-    return referer;
+  // Fall back to ?fallback-id= parameter (for environments like GitHub that strip Referer)
+  let fallbackId: string | undefined;
+  if (req.query?.["fallback-id"]) {
+    fallbackId = Array.isArray(req.query["fallback-id"])
+      ? req.query["fallback-id"][0]
+      : req.query["fallback-id"];
+  } else if (req.url?.includes("?")) {
+    const searchParams = new URLSearchParams(req.url.split("?")[1]);
+    fallbackId = searchParams.get("fallback-id") || undefined;
   }
+
+  if (fallbackId) {
+    return `fallback:${fallbackId}`;
+  }
+
+  return null;
 }
 
 function parseRequest(req: RequestLike): {
@@ -111,10 +127,10 @@ export function createViewCounter(options: ViewCounterOptions): ViewCounter {
 
   async function handler(req: RequestLike, res: ResponseLike): Promise<void> {
     try {
-      const pageUrl = getReferrerUrl(req);
+      const pageUrl = getPageUrl(req);
 
       if (!pageUrl) {
-        res.status(400).send("Missing referer header");
+        res.status(400).send("Missing Referer header. Use ?fallback-id=your-id for environments that strip Referer (e.g., GitHub READMEs).");
         return;
       }
 

@@ -1,5 +1,7 @@
 import "dotenv/config";
 import http from "http";
+import fs from "fs";
+import path from "path";
 import { createViewCounter, RequestLike, ResponseLike, COLORS } from ".";
 
 const required = [
@@ -35,54 +37,6 @@ const counter = createViewCounter({
 const PORT = process.env.PORT || 3000;
 const CACHE_TTL_DISPLAY = ((cacheTtlMs ?? 1800000) / 60000).toFixed(0);
 const colorNames = Object.keys(COLORS).join(", ");
-
-function renderTestPage(pageName: string): string {
-  return `<!DOCTYPE html>
-<html>
-  <head>
-    <title>${pageName} - view-count test</title>
-  </head>
-  <body style="font-family: system-ui; max-width: 700px; margin: 50px auto; padding: 20px;">
-    <h1>${pageName}</h1>
-    <p>This page tracks both views and unique visitors. Cache TTL: ${CACHE_TTL_DISPLAY} minutes.</p>
-
-    <h3>Views (total page loads):</h3>
-    <p><img src="/views" alt="view count" /></p>
-
-    <h3>Visitors (unique):</h3>
-    <p><img src="/visitors" alt="visitor count" /></p>
-
-    <h3>Color variants:</h3>
-    <p>
-      <img src="/views?color=green" alt="green" />
-      <img src="/views?color=blue" alt="blue" />
-      <img src="/views?color=red" alt="red" />
-      <img src="/views?color=orange" alt="orange" />
-      <img src="/views?color=purple" alt="purple" />
-      <img src="/views?color=pink" alt="pink" />
-      <img src="/views?color=cyan" alt="cyan" />
-    </p>
-
-    <h3>Test caching:</h3>
-    <ul>
-      <li>Refresh - counts stay the same (browser cached for ${CACHE_TTL_DISPLAY} min)</li>
-      <li>Hard refresh (Ctrl+Shift+R) - views increase, visitors stays same</li>
-      <li>Incognito window - both increase</li>
-    </ul>
-
-    <h3>Other test pages:</h3>
-    <ul>
-      <li><a href="/page/home">Home Page</a></li>
-      <li><a href="/page/blog">Blog Page</a></li>
-      <li><a href="/page/about">About Page</a></li>
-    </ul>
-
-    <p style="margin-top: 40px; color: #666; font-size: 12px;">
-      Each page tracks stats separately based on URL.
-    </p>
-  </body>
-</html>`;
-}
 
 async function handleCounter(
   req: http.IncomingMessage,
@@ -120,49 +74,15 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url || "/", `http://localhost:${PORT}`);
 
   if (url.pathname === "/") {
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(`<!DOCTYPE html>
-<html>
-  <head><title>view-count dev server</title></head>
-  <body style="font-family: system-ui; max-width: 700px; margin: 50px auto; padding: 20px;">
-    <h1>view-count dev server</h1>
-    <p>The counter tracks views based on the <code>Referer</code> header.</p>
-
-    <h3>Endpoints:</h3>
-    <ul>
-      <li><code>/views</code> - Shows total page views</li>
-      <li><code>/visitors</code> - Shows unique visitors</li>
-    </ul>
-
-    <h3>Color options:</h3>
-    <p>Add <code>?color=name</code> to customize: ${colorNames}</p>
-
-    <h3>How it works:</h3>
-    <ol>
-      <li>Embed <code>&lt;img src="/views" /&gt;</code> or <code>&lt;img src="/visitors" /&gt;</code></li>
-      <li>Counter reads the Referer header to identify the page</li>
-      <li>Browser caches the image for ${CACHE_TTL_DISPLAY} minutes</li>
-    </ol>
-
-    <h3>Test Pages:</h3>
-    <ul>
-      <li><a href="/page/home">Home Page</a></li>
-      <li><a href="/page/blog">Blog Page</a></li>
-      <li><a href="/page/about">About Page</a></li>
-    </ul>
-
-    <h3>Embed examples:</h3>
-    <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px;">&lt;img src="http://localhost:${PORT}/views" alt="views" /&gt;
-&lt;img src="http://localhost:${PORT}/visitors?color=blue" alt="visitors" /&gt;</pre>
-  </body>
-</html>`);
-    return;
-  }
-
-  if (url.pathname.startsWith("/page/")) {
-    const pageName = url.pathname.replace("/page/", "") || "Test Page";
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(renderTestPage(pageName));
+    const indexPath = path.join(__dirname, "..", "public", "index.html");
+    try {
+      const html = fs.readFileSync(indexPath, "utf-8");
+      res.writeHead(200, { "Content-Type": "text/html" });
+      res.end(html);
+    } catch {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end("Error loading index.html");
+    }
     return;
   }
 
@@ -181,8 +101,4 @@ server.listen(PORT, () => {
   console.log(`  Endpoints: /views, /visitors`);
   console.log(`  Colors: ${colorNames}`);
   console.log(`  Cache TTL: ${CACHE_TTL_DISPLAY} minutes\n`);
-  console.log(`  Test pages:`);
-  console.log(`    http://localhost:${PORT}/page/home`);
-  console.log(`    http://localhost:${PORT}/page/blog`);
-  console.log(`    http://localhost:${PORT}/page/about\n`);
 });

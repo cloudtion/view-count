@@ -1,9 +1,9 @@
-# view-count
+# View Count
 
 A simple, embeddable view counter badge for any website. Track page views and unique visitors with a beautiful two-tone SVG badge.<br/>
 Powered by Firebase _or_ Express.js and SQLite.
 
-![views](https://view-count.cloudtion.com/views) ![visitors](https://cloudtion.com/visitors)
+![views](https://view-count.cloudtion.com/views?fallback-id=cloudtion-github-view-count) ![visitors](https://view-count.cloudtion.com/visitors?fallback-id=cloudtion-github-view-count)
 
 ## Quick Start (Hosted Service)
 
@@ -44,9 +44,19 @@ Add a `?color=` parameter to change the badge color:
 | `gray` | ![gray](https://img.shields.io/badge/views-123-gray) |
 | `black` | ![black](https://img.shields.io/badge/views-123-black) |
 
+### GitHub READMEs & Restricted Environments
+
+GitHub (and some other platforms) strip the `Referer` header via their image proxy. Use the `?fallback-id=` parameter:
+
+```markdown
+![views](https://view-count.cloudtion.com/views?fallback-id=my-repo-name)
+```
+
+The `fallback-id` is only used when no `Referer` header is present, so it can't be used to spoof counts on normal websites.
+
 ### How It Works
 
-1. When the image loads, the counter reads the `Referer` header to identify which page the badge is embedded on
+1. When the image loads, the counter reads the `Referer` header to identify which page the badge is embedded on (or uses `fallback-id` if no Referer is present)
 2. Each unique page URL gets its own view/visitor count
 3. The badge is cached by the browser (default: 30 minutes) to prevent excessive counting
 4. Unique visitors are tracked by hashing IP + User-Agent
@@ -199,7 +209,9 @@ The handler responds differently based on the URL path:
 | `/views` | Total page views |
 | `/visitors` | Unique visitors |
 
-Both endpoints accept a `?color=` query parameter.
+Both endpoints accept these query parameters:
+- `?color=` - Badge color (see available colors below)
+- `?fallback-id=` - Page identifier for environments that strip Referer headers (e.g., GitHub)
 
 ### Available Colors
 

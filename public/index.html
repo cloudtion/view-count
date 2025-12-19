@@ -1,14 +1,562 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
-  <title>View Count</title>
-  <meta http-equiv="refresh" content="0;url=https://github.com/cloudtion/view-count">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Count by Cloudtion</title>
+  <meta name="description"
+    content="A simple, embeddable view counter badge for any website. Track page views and unique visitors with a beautiful SVG badge.">
+  <style>
+    :root {
+      --primary: #4c1;
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --text: #c9d1d9;
+      --text-muted: #8b949e;
+      --border: #30363d;
+      --code-bg: #1f2428;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.25rem;
+      color: #fff;
+    }
+
+    .byline {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .byline a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .byline a:hover {
+      text-decoration: underline;
+    }
+
+    .tagline {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .badges {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .badges img {
+      height: 20px;
+    }
+
+    .links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: var(--card-bg);
+      color: var(--text);
+      text-decoration: none;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .links a:hover {
+      border-color: var(--primary);
+      background: #1c2128;
+    }
+
+    .links svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #fff;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      margin: 1.5rem 0 0.75rem;
+      color: #fff;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.875rem;
+      color: var(--text);
+    }
+
+    .inline-code {
+      background: var(--code-bg);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+
+    .customizer {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .customizer-row {
+      margin-bottom: 1.25rem;
+    }
+
+    .customizer-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .customizer-label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .option-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .option-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .option-btn:hover {
+      border-color: var(--text-muted);
+    }
+
+    .option-btn.active {
+      border-color: var(--primary);
+      background: rgba(68, 204, 17, 0.1);
+    }
+
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .preview-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: var(--code-bg);
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      min-height: 60px;
+    }
+
+    .code-output {
+      position: relative;
+    }
+
+    .code-output pre {
+      margin-bottom: 0;
+      padding-right: 3rem;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .copy-btn:hover {
+      border-color: var(--primary);
+    }
+
+    .copy-btn.copied {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .steps {
+      counter-reset: step;
+    }
+
+    .step {
+      position: relative;
+      padding-left: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1.75rem;
+      height: 1.75rem;
+      background: var(--primary);
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    footer a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      header {
+        padding: 2rem 0;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <p>Redirecting to documentation...</p>
+  <div class="container">
+    <header>
+      <h1>View Count</h1>
+      <p class="byline">by <a href="https://github.com/cloudtion" target="_blank" rel="noopener">Cloudtion</a></p>
+      <p class="tagline">A simple, embeddable view counter badge for any website.<br>Track page views and unique
+        visitors with a beautiful SVG badge.</p>
+      <div class="badges">
+        <img src="https://view-count.cloudtion.com/views" alt="views">
+        <img src="https://view-count.cloudtion.com/visitors?color=blue" alt="visitors">
+      </div>
+      <div class="links">
+        <a href="https://github.com/cloudtion/view-count" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          GitHub
+        </a>
+        <a href="https://www.npmjs.com/package/view-count" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <path d="M0 0v16h16V0H0zm13 13H8v-2H5v2H3V3h10v10z" />
+            <path d="M5 5h2v4H5V5zm3 0h2v6H8V5z" />
+          </svg>
+          npm
+        </a>
+      </div>
+    </header>
+
+    <section>
+      <h2>Quick Start</h2>
+      <p>The easiest way to use View Count is with the hosted service. Just embed an image tag on your page.</p>
+
+      <h3>Customize</h3>
+      <div class="customizer">
+        <div class="customizer-row">
+          <label class="customizer-label">Type</label>
+          <div class="option-group" id="type-options">
+            <button class="option-btn active" data-value="views">Views</button>
+            <button class="option-btn" data-value="visitors">Visitors</button>
+          </div>
+        </div>
+
+        <div class="customizer-row">
+          <label class="customizer-label">Color</label>
+          <div class="option-group" id="color-options">
+            <button class="option-btn active" data-value="green"><span class="color-dot" style="background:#4c1"></span>
+              Green</button>
+            <button class="option-btn" data-value="blue"><span class="color-dot" style="background:#007ec6"></span>
+              Blue</button>
+            <button class="option-btn" data-value="red"><span class="color-dot" style="background:#e05d44"></span>
+              Red</button>
+            <button class="option-btn" data-value="orange"><span class="color-dot" style="background:#fe7d37"></span>
+              Orange</button>
+            <button class="option-btn" data-value="yellow"><span class="color-dot" style="background:#dfb317"></span>
+              Yellow</button>
+            <button class="option-btn" data-value="purple"><span class="color-dot" style="background:#9f7be1"></span>
+              Purple</button>
+            <button class="option-btn" data-value="pink"><span class="color-dot" style="background:#e85aad"></span>
+              Pink</button>
+            <button class="option-btn" data-value="cyan"><span class="color-dot" style="background:#24b9a7"></span>
+              Cyan</button>
+            <button class="option-btn" data-value="gray"><span class="color-dot" style="background:#555"></span>
+              Gray</button>
+            <button class="option-btn" data-value="black"><span class="color-dot" style="background:#1a1a1a"></span>
+              Black</button>
+          </div>
+        </div>
+
+        <div class="customizer-row">
+          <label class="customizer-label">Size</label>
+          <div class="option-group" id="size-options">
+            <button class="option-btn" data-value="small">Small</button>
+            <button class="option-btn active" data-value="medium">Medium</button>
+            <button class="option-btn" data-value="large">Large</button>
+          </div>
+        </div>
+
+        <div class="customizer-row">
+          <label class="customizer-label">Preview</label>
+          <div class="preview-area">
+            <img id="preview-img" src="/views" alt="preview" />
+          </div>
+        </div>
+
+        <div class="customizer-row code-output">
+          <pre><code id="code-snippet">&lt;img src="https://view-count.cloudtion.com/views" alt="views" /&gt;</code></pre>
+          <button class="copy-btn" id="copy-btn">Copy</button>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <p>When the image loads, the counter reads the <code class="inline-code">Referer</code> header to identify
+            which page the badge is embedded on.</p>
+        </div>
+        <div class="step">
+          <p>Each unique page URL gets its own view/visitor count.</p>
+        </div>
+        <div class="step">
+          <p>The badge is cached by the browser (default: 30 minutes) to prevent excessive counting.</p>
+        </div>
+        <div class="step">
+          <p>Unique visitors are tracked by hashing IP + User-Agent.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Self-Hosted</h2>
+      <p>Install view-count as a library to run your own counter service. Powered by Firebase or Express.js with SQLite.
+      </p>
+
+      <h3>Installation</h3>
+      <pre><code>npm install view-count</code></pre>
+
+      <h3>Basic Setup</h3>
+      <pre><code>import { createViewCounter } from 'view-count';
+
+const counter = createViewCounter({
+  firebaseConfig: {
+    projectId: 'your-project-id',
+    clientEmail: 'your-service-account@project.iam.gserviceaccount.com',
+    privateKey: '-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n',
+    collectionName: 'view-counts',
+  },
+});
+
+// Use with Express
+app.get('/views', counter.handler);
+app.get('/visitors', counter.handler);</code></pre>
+
+      <p>See the <a href="https://github.com/cloudtion/view-count#readme" target="_blank" rel="noopener"
+          style="color: var(--primary)">full documentation</a> for Firebase Functions deployment, Vercel examples, and
+        API reference.</p>
+    </section>
+
+    <section>
+      <h2>API Reference</h2>
+      <div class="card">
+        <h3 style="margin-top: 0;">createViewCounter(options)</h3>
+        <p>Creates a new view counter instance.</p>
+        <p><strong>Returns:</strong></p>
+        <ul style="color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0;">
+          <li><code class="inline-code">handler(req, res)</code> - Express-compatible request handler</li>
+          <li><code class="inline-code">getStats(pageUrl)</code> - Get stats for a page without incrementing</li>
+          <li><code class="inline-code">recordView(pageUrl, visitorId)</code> - Manually record a view</li>
+          <li><code class="inline-code">preview(count, mode?, color?)</code> - Generate SVG without recording</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <p>MIT License &middot; <a href="https://github.com/cloudtion/view-count">View on GitHub</a> &middot; <a
+          href="https://www.npmjs.com/package/view-count">npm package</a></p>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const state = {
+        type: 'views',
+        color: 'green',
+        size: 'medium'
+      };
+
+      const sizes = {
+        small: { height: 18, style: 'height="18"' },
+        medium: { height: 20, style: '' },
+        large: { height: 28, style: 'height="28"' }
+      };
+
+      const previewImg = document.getElementById('preview-img');
+      const codeSnippet = document.getElementById('code-snippet');
+      const copyBtn = document.getElementById('copy-btn');
+
+      function updateOutput() {
+        const params = [];
+        if (state.color !== 'green') params.push(`color=${state.color}`);
+        if (state.size !== 'medium') params.push(`size=${state.size}`);
+        const query = params.length > 0 ? '?' + params.join('&') : '';
+
+        const previewUrl = `/${state.type}${query}`;
+        previewImg.src = previewUrl;
+        previewImg.style.height = sizes[state.size].height + 'px';
+
+        const fullUrl = `https://view-count.cloudtion.com/${state.type}${query}`;
+        const sizeAttr = sizes[state.size].style ? ' ' + sizes[state.size].style : '';
+        const code = `<img src="${fullUrl}" alt="${state.type}"${sizeAttr} />`;
+        codeSnippet.textContent = code;
+      }
+
+      function setupOptionGroup(groupId, stateKey) {
+        const group = document.getElementById(groupId);
+        group.addEventListener('click', function (e) {
+          const btn = e.target.closest('.option-btn');
+          if (!btn) return;
+
+          group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state[stateKey] = btn.dataset.value;
+          updateOutput();
+        });
+      }
+
+      setupOptionGroup('type-options', 'type');
+      setupOptionGroup('color-options', 'color');
+      setupOptionGroup('size-options', 'size');
+
+      copyBtn.addEventListener('click', function () {
+        const code = codeSnippet.textContent;
+        navigator.clipboard.writeText(code).then(function () {
+          copyBtn.textContent = 'Copied!';
+          copyBtn.classList.add('copied');
+          setTimeout(function () {
+            copyBtn.textContent = 'Copy';
+            copyBtn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+
+      updateOutput();
+    })();
+  </script>
 </body>
 
 </html>
