@@ -8,7 +8,8 @@
     "build": "tsc",
     "dev": "tsx watch src/dev-server.ts",
     "prepublishOnly": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "npm run build && firebase deploy"
   },
   "keywords": [
     "view-counter",
@@ -27,15 +28,17 @@
     "url": ""
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": "24"
   },
   "files": [
     "dist"
   ],
   "dependencies": {
-    "firebase-admin": "^12.0.0"
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^6.0.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^20.0.0",
     "dotenv": "^16.0.0",
     "tsx": "^4.0.0",

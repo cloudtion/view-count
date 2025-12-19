@@ -1,9 +1,11 @@
 {
   "functions": {
-    "source": "functions",
+    "source": ".",
+    "codebase": "default",
     "predeploy": [
-      "npm --prefix \"$RESOURCE_DIR\" run build"
-    ]
+      "npm run build"
+    ],
+    "runtime": "nodejs24"
   },
   "firestore": {
     "rules": "firestore.rules",

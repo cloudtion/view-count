@@ -1,13 +1,13 @@
 import "dotenv/config";
-import http from "http";
 import fs from "fs";
+import http from "http";
 import path from "path";
-import { createViewCounter, RequestLike, ResponseLike, COLORS } from ".";
+import { COLORS, createViewCounter, RequestLike, ResponseLike } from ".";
 
 const required = [
-  "FIREBASE_PROJECT_ID",
-  "FIREBASE_CLIENT_EMAIL",
-  "FIREBASE_PRIVATE_KEY",
+  "FB_PROJECT_ID",
+  "FB_CLIENT_EMAIL",
+  "FB_PRIVATE_KEY",
 ] as const;
 const missing = required.filter((key) => !process.env[key]);
 
@@ -26,15 +26,15 @@ const cacheTtlMs = process.env.CACHE_TTL_MS
 
 const counter = createViewCounter({
   firebaseConfig: {
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY,
-    collectionName: process.env.FIREBASE_COLLECTION_NAME ?? "view-counts",
+    projectId: process.env.FB_PROJECT_ID,
+    clientEmail: process.env.FB_CLIENT_EMAIL,
+    privateKey: process.env.FB_PRIVATE_KEY,
+    collectionName: process.env.FB_COLLECTION_NAME ?? "view-counts",
   },
   cacheTtlMs,
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVER_PORT || 3000;
 const CACHE_TTL_DISPLAY = ((cacheTtlMs ?? 1800000) / 60000).toFixed(0);
 const colorNames = Object.keys(COLORS).join(", ");
 

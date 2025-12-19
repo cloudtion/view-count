@@ -12,13 +12,13 @@ The easiest way to use view-count is with the hosted service. Just embed an imag
 ### Track Page Views
 
 ```html
-<img src="https://view-count.cloudtion.com/views" alt="views" />
+<img src="https://view-count.cloudtion.com/views?fallback-id=cloudtion-github-view-count" alt="page view count" />
 ```
 
 ### Track Unique Visitors
 
 ```html
-<img src="https://view-count.cloudtion.com/visitors" alt="visitors" />
+<img src="https://view-count.cloudtion.com/visitors?color=blue&fallback-id=cloudtion-github-view-count" alt="page visitor count" />
 ```
 
 ### Customize Colors
@@ -328,12 +328,12 @@ npm run build
 ### Environment Variables
 
 ```env
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_CLIENT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-FIREBASE_COLLECTION_NAME=view-counts
+FB_PROJECT_ID=your-project-id
+FB_CLIENT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
+FB_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FB_COLLECTION_NAME=view-counts
 CACHE_TTL_MS=1800000
-PORT=3000
+SERVER_PORT=3000
 ```
 
 ---

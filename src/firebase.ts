@@ -77,13 +77,20 @@ export async function getStats(pageUrl: string): Promise<PageStats> {
   };
 }
 
+export interface SourceInfo {
+  referer?: string;
+  fallbackId?: string;
+}
+
 export async function recordView(
   pageUrl: string,
-  visitorId: string
+  visitorId: string,
+  sourceInfo?: SourceInfo
 ): Promise<PageStats> {
   const docId = hashPageUrl(pageUrl);
   const docRef = getDb().collection(collectionName).doc(docId);
   const visitorRef = docRef.collection("visitors").doc(visitorId);
+  const sourceLoggingEnabled = process.env.SOURCE_LOGGING === "true";
 
   const result = await getDb().runTransaction(async (transaction) => {
     const [visitorDoc, statsDoc] = await Promise.all([
@@ -105,17 +112,28 @@ export async function recordView(
       });
     }
 
+    const baseData = {
+      url: pageUrl,
+      views: newViews,
+      visitors: newVisitors,
+    };
+
+    // Add source info if logging is enabled
+    const sourceData = sourceLoggingEnabled && sourceInfo ? {
+      ...(sourceInfo.referer && { referer: sourceInfo.referer }),
+      ...(sourceInfo.fallbackId && { fallbackId: sourceInfo.fallbackId }),
+    } : {};
+
     if (!statsDoc.exists) {
       transaction.set(docRef, {
-        url: pageUrl,
-        views: newViews,
-        visitors: newVisitors,
+        ...baseData,
+        ...sourceData,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
     } else {
       transaction.update(docRef, {
-        views: newViews,
-        visitors: newVisitors,
+        ...baseData,
+        ...sourceData,
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
     }

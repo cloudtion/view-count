@@ -5,6 +5,7 @@ import {
   initializeFirebase,
   PageStats,
   recordView,
+  SourceInfo,
 } from "./firebase";
 import { COLORS, DEFAULT_STYLE, generateSvg, StyleOptions } from "./svg";
 
@@ -58,7 +59,12 @@ function getVisitorId(req: RequestLike): string {
     .substring(0, 32);
 }
 
-function getPageUrl(req: RequestLike): string | null {
+interface PageUrlResult {
+  pageUrl: string;
+  sourceInfo: SourceInfo;
+}
+
+function getPageUrl(req: RequestLike): PageUrlResult | null {
   // First try Referer header (most secure, can't be spoofed by end users)
   const referer =
     (req.headers?.["referer"] as string) ||
@@ -67,9 +73,15 @@ function getPageUrl(req: RequestLike): string | null {
   if (referer) {
     try {
       const url = new URL(referer);
-      return `${url.origin}${url.pathname}`;
+      return {
+        pageUrl: `${url.origin}${url.pathname}`,
+        sourceInfo: { referer },
+      };
     } catch {
-      return referer;
+      return {
+        pageUrl: referer,
+        sourceInfo: { referer },
+      };
     }
   }
 
@@ -85,7 +97,10 @@ function getPageUrl(req: RequestLike): string | null {
   }
 
   if (fallbackId) {
-    return `fallback:${fallbackId}`;
+    return {
+      pageUrl: `fallback:${fallbackId}`,
+      sourceInfo: { fallbackId },
+    };
   }
 
   return null;
@@ -127,16 +142,17 @@ export function createViewCounter(options: ViewCounterOptions): ViewCounter {
 
   async function handler(req: RequestLike, res: ResponseLike): Promise<void> {
     try {
-      const pageUrl = getPageUrl(req);
+      const result = getPageUrl(req);
 
-      if (!pageUrl) {
+      if (!result) {
         res.status(400).send("Missing Referer header. Use ?fallback-id=your-id for environments that strip Referer (e.g., GitHub READMEs).");
         return;
       }
 
+      const { pageUrl, sourceInfo } = result;
       const visitorId = getVisitorId(req);
       const { mode, color } = parseRequest(req);
-      const stats = await recordView(pageUrl, visitorId);
+      const stats = await recordView(pageUrl, visitorId, sourceInfo);
 
       const count =
         mode === CounterMode.Visitors ? stats.visitors : stats.views;
