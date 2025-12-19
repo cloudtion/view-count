@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "cloudtion-6204b"
+  },
+  "targets": {
+    "cloudtion-6204b": {
+      "hosting": {
+        "production": [
+          "cloudtion-6204b"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

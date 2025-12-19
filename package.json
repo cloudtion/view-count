@@ -1,0 +1,44 @@
+{
+  "name": "view-count",
+  "version": "1.0.0",
+  "description": "A simple, embeddable view counter that generates dynamic SVG images showing page view counts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/dev-server.ts",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "view-counter",
+    "page-views",
+    "analytics",
+    "firebase",
+    "svg",
+    "badge",
+    "counter",
+    "embed"
+  ],
+  "author": "cloudtion",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "dotenv": "^16.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
