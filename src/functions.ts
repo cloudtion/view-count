@@ -3,7 +3,9 @@ import type { Response } from "express";
 import { createViewCounter } from "./counter";
 import type { RequestLike, ResponseLike } from "./counter";
 
-const DEFAULT_CACHE_TTL_SECONDS = 30 * 60; // 30 minutes
+// Browser cache TTL - prevents rapid re-fetching from same browser
+// s-maxage=0 ensures CDN doesn't cache, so every request hits the function
+const BROWSER_CACHE_TTL_SECONDS = 30 * 60; // 30 minutes
 
 // Create counter instance - uses Firebase Admin SDK initialized by the environment
 const counter = createViewCounter({
@@ -45,9 +47,11 @@ function toResponseLike(res: Response): ResponseLike {
 
 // Views endpoint
 export const views = functions.https.onRequest(async (req, res) => {
+  // max-age: browser cache (prevents rapid re-fetching from same user)
+  // s-maxage=0: disable CDN cache so every unique request hits the function
   res.setHeader(
     "Cache-Control",
-    `public, max-age=${DEFAULT_CACHE_TTL_SECONDS}, s-maxage=${DEFAULT_CACHE_TTL_SECONDS}`
+    `public, max-age=${BROWSER_CACHE_TTL_SECONDS}, s-maxage=0`
   );
   await counter.handler(toRequestLike(req), toResponseLike(res));
 });
@@ -56,7 +60,7 @@ export const views = functions.https.onRequest(async (req, res) => {
 export const visitors = functions.https.onRequest(async (req, res) => {
   res.setHeader(
     "Cache-Control",
-    `public, max-age=${DEFAULT_CACHE_TTL_SECONDS}, s-maxage=${DEFAULT_CACHE_TTL_SECONDS}`
+    `public, max-age=${BROWSER_CACHE_TTL_SECONDS}, s-maxage=0`
   );
   await counter.handler(toRequestLike(req), toResponseLike(res));
 });

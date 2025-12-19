@@ -1,7 +1,6 @@
 # View Count
 
-A simple, embeddable view counter badge for any website. Track page views and unique visitors with a beautiful two-tone SVG badge.<br/>
-Powered by Firebase _or_ Express.js and SQLite.
+A simple, embeddable view counter badge for any website. Track page views and unique visitors with a beautiful two-tone SVG badge. Powered by Firebase.
 
 ![views](https://view-count.cloudtion.com/views?fallback-id=cloudtion-github-view-count) ![visitors](https://view-count.cloudtion.com/visitors?fallback-id=cloudtion-github-view-count)
 
@@ -265,42 +264,35 @@ The easiest way to deploy your own instance is using Firebase Functions.
    }
    ```
 
-2. Install functions dependencies:
+2. Deploy:
    ```bash
-   cd functions
-   npm install
-   cd ..
-   ```
-
-3. Deploy:
-   ```bash
-   firebase deploy
+   npm run deploy
    ```
 
 This deploys:
 - **Cloud Functions**: `views` and `visitors` endpoints
 - **Firestore Rules**: Allow read/write to `view-counts` collection
+- **Hosting**: Landing page at your Firebase domain
 
 ### Your Endpoints
 
-After deployment, your endpoints will be:
+After deployment, your endpoints will be available at your Firebase Hosting domain:
 ```
-https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/views
-https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/visitors
+https://YOUR_PROJECT_ID.web.app/views
+https://YOUR_PROJECT_ID.web.app/visitors
 ```
 
 Embed them on any page:
 ```html
-<img src="https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/views" alt="views" />
-<img src="https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/visitors?color=blue" alt="visitors" />
+<img src="https://YOUR_PROJECT_ID.web.app/views" alt="views" />
+<img src="https://YOUR_PROJECT_ID.web.app/visitors?color=blue" alt="visitors" />
 ```
 
 ### Local Testing
 
-Test locally with Firebase emulators:
+Test locally with the dev server:
 ```bash
-cd functions
-npm run serve
+npm run dev
 ```
 
 ---
@@ -309,7 +301,7 @@ npm run serve
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/view-count.git
+git clone https://github.com/cloudtion/view-count.git
 cd view-count
 
 # Install dependencies

@@ -1,5 +1,5 @@
 {
-  "name": "view-count",
+  "name": "view-counter",
   "version": "1.0.0",
   "description": "A simple, embeddable view counter that generates dynamic SVG images showing page view counts",
   "main": "dist/index.js",
@@ -25,13 +25,18 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/cloudtion/view-count.git"
+  },
+  "homepage": "https://github.com/cloudtion/view-count#readme",
+  "bugs": {
+    "url": "https://github.com/cloudtion/view-count/issues"
   },
   "engines": {
-    "node": "24"
+    "node": ">=18"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/dev-server.*"
   ],
   "dependencies": {
     "firebase-admin": "^12.0.0",
