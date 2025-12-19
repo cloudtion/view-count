@@ -1,6 +1,6 @@
 {
   "name": "view-counter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple, embeddable view counter that generates dynamic SVG images showing page view counts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
